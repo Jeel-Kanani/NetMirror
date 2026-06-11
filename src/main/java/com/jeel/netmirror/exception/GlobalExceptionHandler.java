@@ -15,4 +15,13 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
     }
+
+    @ExceptionHandler(OmdbMovieNotFoundException.class)
+    public ResponseEntity<String> handleOmdbMovieNotFoundException(
+            OmdbMovieNotFoundException exception
+    ){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
 }

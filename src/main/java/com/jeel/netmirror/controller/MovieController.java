@@ -1,28 +1,31 @@
 package com.jeel.netmirror.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.jeel.netmirror.service.OmdbService;
+import org.springframework.web.bind.annotation.*;
 
 import com.jeel.netmirror.service.MovieService;   //For connecting controller and service
 import com.jeel.netmirror.model.Movie;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
+
+import com.jeel.netmirror.dto.OmdbMovieResponse;
+import com.jeel.netmirror.dto.MovieSearchResponse;
 
 
 @RestController
 public class MovieController {
 
     private final MovieService movieService;
+    private final OmdbService omdbService;
 
-    public MovieController(MovieService movieService) {
+    public MovieController(MovieService movieService,
+                           OmdbService omdbService) {
         this.movieService = movieService;
+        this.omdbService = omdbService;
     }
 
     @GetMapping("/api/movies")
@@ -32,14 +35,14 @@ public class MovieController {
 
     @PostMapping("/api/movies")
     public ResponseEntity<Movie> addMovie(@Valid @RequestBody Movie movie) {   //Request body for Postman request's JSON data spring automatically convert into Movie movie object
-        Movie savedMovie=movieService.addMovie(movie);
+        Movie savedMovie = movieService.addMovie(movie);
         return ResponseEntity.status(201).body(savedMovie);
     }
 
     @GetMapping("/api/movies/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable Long id) {
-        Movie movie=movieService.getMovieById(id);
-        if(movie==null){
+        Movie movie = movieService.getMovieById(id);
+        if (movie == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(movie);
@@ -54,5 +57,23 @@ public class MovieController {
     public Movie updateMovie(@PathVariable Long id,
                              @RequestBody Movie updatedMovie) {
         return movieService.updateMovie(id, updatedMovie);
+    }
+    @GetMapping("/api/search")
+    public OmdbMovieResponse searchMovie(@RequestParam String title){
+        return omdbService.searchMovie(title);
+    }
+
+    @GetMapping("/api/search/movies")
+    public MovieSearchResponse searchMovies(
+            @RequestParam String query) {
+
+        return omdbService.searchMovies(query);
+    }
+
+    @GetMapping("/api/movie/{imdbId}")
+    public OmdbMovieResponse getMovieByImdbId(
+            @PathVariable String imdbId) {
+
+        return omdbService.getMovieByImdbId(imdbId);
     }
 }
