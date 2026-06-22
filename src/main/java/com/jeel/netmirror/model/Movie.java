@@ -1,9 +1,13 @@
 package com.jeel.netmirror.model;
 
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "movies")
 public class Movie {
-    private Long id;
+    @Id
+    private String id;
     @NotBlank(message = "Title cannot be empty")
     private String title;
     @NotBlank(message = "Genre cannot be empty")
@@ -11,7 +15,7 @@ public class Movie {
     private boolean watched;
     private boolean watchLater;
 
-    public Movie(Long id, String title, String genre, boolean watched, boolean watchLater) {
+    public Movie(String id, String title, String genre, boolean watched, boolean watchLater) {
         this.id = id;
         this.title = title;
         this.genre = genre;
@@ -19,11 +23,11 @@ public class Movie {
         this.watchLater = watchLater;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
